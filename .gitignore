@@ -1,0 +1,6 @@
+.build/
+build/
+.swiftpm/
+*.app
+.DS_Store
+docs/video/.hyperframes/

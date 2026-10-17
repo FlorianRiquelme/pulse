@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #dfe6fb; }
+      body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif; -webkit-font-smoothing: antialiased; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      .clip { position: absolute; inset: 0; }
+      .bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+      #cam { position: absolute; inset: 0; transform-origin: 1920px 0px; }
+      #items { position: relative; display: flex; align-items: center; gap: 18px; height: 44px; }
+      #items img { height: 44px; }
+
+      .menubar { position: absolute; left: 0; top: 0; width: 1920px; height: 48px; display: flex; align-items: center;
+                 padding: 0 22px; background: rgba(255, 255, 255, .42); backdrop-filter: blur(30px);
+                 box-shadow: 0 1px 0 rgba(0, 0, 0, .06); color: #111; font-size: 26px; }
+      .menubar .menu { display: flex; align-items: center; gap: 40px; }
+      .menubar .menu b { font-weight: 700; }
+      .menubar .menu span { font-weight: 500; }
+      .menubar .spacer { flex: 1; }
+      .menubar .extras { flex-shrink: 0; display: flex; align-items: center; gap: 36px; height: 48px; }
+      .menubar img { display: block; }
+      .clock { width: 150px; text-align: right; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: .01em; }
+      #item { position: relative; height: 44px; }
+      #itemhl { position: absolute; left: -10px; right: -10px; top: 3px; bottom: 3px; border-radius: 10px;
+                background: rgba(0, 0, 0, .14); opacity: 0; }
+      #ring { position: absolute; left: -16px; right: -16px; top: -2px; bottom: -2px; border-radius: 14px;
+              border: 4px solid #22c58b; opacity: 0; }
+
+      #pop { position: absolute; left: 929px; top: 62px; width: 760px; height: 1000px; opacity: 0; transform-origin: 380px 0px; }
+      #pop .arrow { position: absolute; left: 362px; top: -14px; width: 36px; height: 18px; overflow: hidden; }
+      #pop .arrow::after { content: ""; position: absolute; left: 5px; top: 7px; width: 26px; height: 26px; transform: rotate(45deg);
+                           background: #ececec; box-shadow: 0 0 0 1px rgba(0, 0, 0, .12); border-radius: 4px; }
+      #pop .view { position: absolute; inset: 0; border-radius: 24px; overflow: hidden; background: #ececec;
+                   box-shadow: 0 30px 80px rgba(30, 30, 70, .35), 0 0 0 1px rgba(0, 0, 0, .12); }
+      .pn { position: absolute; left: 0; top: 0; width: 760px; opacity: 0; }
+      .pn > img { display: block; width: 760px; }
+      .hl { position: absolute; left: 26px; width: 708px; border-radius: 30px; border: 5px solid #22c58b;
+            box-shadow: 0 0 0 6px rgba(34, 197, 139, .18); opacity: 0; }
+
+      .cap { position: absolute; left: 56px; top: 430px; width: 700px; padding: 34px 40px; border-radius: 30px;
+             background: rgba(22, 22, 28, .84); color: #fff; font-size: 48px; font-weight: 700; line-height: 1.16;
+             letter-spacing: -.02em; box-shadow: 0 16px 40px rgba(0, 0, 0, .25), inset 0 0 0 1px rgba(255, 255, 255, .12); opacity: 0; }
+      .cap small { display: block; margin-top: 14px; font-size: 32px; font-weight: 500; line-height: 1.25; color: #c9cbd6; letter-spacing: -.01em; }
+      .cap em { font-style: normal; color: #5ff0b4; }
+      .cursor { position: absolute; left: 0; top: 0; width: 40px; height: 58px; opacity: 0; }
+
+      .title { position: absolute; left: 0; right: 0; top: 270px; text-align: center; color: #15161c; }
+      .title img { width: 270px; height: 270px; margin: -25px 0; filter: drop-shadow(0 20px 40px rgba(40, 30, 90, .3)); }
+      .title h1 { margin-top: 34px; font-size: 130px; font-weight: 700; letter-spacing: -.045em; }
+      .title p { margin-top: 18px; font-size: 46px; font-weight: 500; color: #3a3d4c; letter-spacing: -.015em; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="36.5" data-width="1920" data-height="1080">
+
+      <div id="scene" class="clip" data-start="0" data-duration="36.5" data-track-index="0">
+        <div class="bg" style="background-image:url(assets/wallpaper.jpg)"></div>
+        <div id="cam">
+          <div class="menubar">
+            <div class="menu">
+              <img src="assets/apple.logo.png" style="width:28px;height:38px" alt="">
+              <b>Finder</b><span>File</span><span>Edit</span><span>View</span>
+            </div>
+            <div class="spacer"></div>
+            <div class="extras">
+              <div id="items">
+                <div id="ring"></div>
+                <img src="assets/item-cpu.png" style="width:116px" alt="">
+                <img src="assets/item-gpu.png" style="width:116px" alt="">
+                <img src="assets/item-memory.png" style="width:78px" alt="">
+                <img src="assets/item-temperature.png" style="width:72px" alt="">
+                <img src="assets/item-power.png" style="width:88px" alt="">
+                <img src="assets/item-network.png" style="width:84px" alt="">
+                <div id="item">
+                  <div id="itemhl"></div>
+                  <img src="assets/item-battery.png" style="position:relative;width:186px" alt="">
+                </div>
+              </div>
+              <img src="assets/wifi.png" style="width:38px;height:28px" alt="">
+              <img src="assets/magnifyingglass.png" style="width:32px;height:30px" alt="">
+              <img src="assets/switch.2.png" style="width:32px;height:30px" alt="">
+              <span class="clock">Sat&nbsp;&nbsp;14:17</span>
+            </div>
+          </div>
+
+          <div id="pop">
+            <div class="arrow"></div>
+            <div class="view">
+              <div id="p-battery" class="pn"><img src="assets/panel-battery.png" alt="">
+                <div id="h-forecast" class="hl" style="top:497px;height:426px"></div>
+                <div id="h-quit" class="hl" style="top:2163px;height:416px"></div></div>
+              <div id="p-cpu" class="pn"><img src="assets/panel-cpu.png" alt="">
+                <div id="h-cpu" class="hl" style="top:537px;height:214px"></div></div>
+              <div id="p-memory" class="pn"><img src="assets/panel-memory.png" alt="">
+                <div id="h-memory" class="hl" style="top:497px;height:162px"></div></div>
+              <div id="p-sensors" class="pn"><img src="assets/panel-sensors.png" alt="">
+                <div id="h-sensors" class="hl" style="top:245px;height:276px"></div></div>
+              <div id="p-network" class="pn"><img src="assets/panel-network.png" alt="">
+                <div id="h-network" class="hl" style="top:759px;height:422px"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="end" class="clip" data-start="0" data-duration="36.5" data-track-index="1" style="opacity:0">
+        <div class="bg" style="background-image:url(assets/wallpaper.jpg)"></div>
+        <div class="title">
+          <img src="assets/icon.png" alt="">
+          <h1>Pulse</h1>
+          <p>Battery, CPU, memory, sensors and network.<br>One click away.</p>
+        </div>
+      </div>
+
+      <div id="overlay" class="clip" data-start="0" data-duration="36.5" data-track-index="2" style="pointer-events:none">
+        <div id="c-hook" class="cap">Your Mac's vitals, live in the menu bar<small>CPU, GPU, memory, heat, power, network and battery.</small></div>
+        <div id="c-click" class="cap">One click for the full story</div>
+        <div id="c-forecast" class="cap">Know how long your battery <em>really</em> lasts<small>On battery, forecasts from how you actually use your Mac.</small></div>
+        <div id="c-quit" class="cap">Know which app to quit for more time<small>On battery, with the minutes each app costs you.</small></div>
+        <div id="c-cpu" class="cap">Catch apps quietly busy in the background<small>And quit them right from here.</small></div>
+        <div id="c-memory" class="cap">Spot apps that keep eating memory<small>And see what a restart would free.</small></div>
+        <div id="c-sensors" class="cap">Know when your Mac runs hot<small>Chip, SSD and battery temperatures at a glance.</small></div>
+        <div id="c-network" class="cap">See who's using your network<small>Live, app by app.</small></div>
+        <svg id="cursor" class="cursor" viewBox="0 0 20 29"><path d="M1.5 1.5v22.2l5.4-5.2 3.6 8.4 3.6-1.5-3.5-8.3h7.4z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const E = "power2.out", IO = "power2.inOut";
+      const ZOOM = 1.45, TAB_Y = 175;
+      const box = document.querySelector("#item").getBoundingClientRect();
+      const BATTERY = { x: box.left + box.width / 2, y: 24 };
+      const POP = { x: Math.round(BATTERY.x - 380), y: 62 };
+      document.querySelector("#pop").style.left = `${POP.x}px`;
+      // Zoomed, the popover's left edge lands at x = 790, clear of the captions.
+      const ORIGIN_X = (ZOOM * POP.x - 790) / (ZOOM - 1);
+      const items = document.querySelector("#items").getBoundingClientRect();
+      const HOLD = 2.6;
+
+      const cap = (id, t, d) => {
+        tl.fromTo(id, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.3, ease: E }, t);
+        tl.to(id, { opacity: 0, y: -10, duration: 0.25, ease: "power1.in" }, t + d);
+      };
+      const hl = (id, t, d) => {
+        tl.fromTo(id, { opacity: 0, scale: 1.03 }, { opacity: 1, scale: 1, duration: 0.3, ease: E }, t);
+        tl.to(id, { opacity: 0, duration: 0.25 }, t + d);
+      };
+      const click = (x, y, t) => {
+        tl.to("#cursor", { opacity: 1, duration: 0.15 }, t);
+        tl.to("#cursor", { x: x - 6, y: y - 4, duration: 0.65, ease: IO }, t);
+        tl.to("#cursor", { scale: 0.86, duration: 0.07, yoyo: true, repeat: 1, transformOrigin: "0 0" }, t + 0.7);
+        tl.to("#cursor", { opacity: 0, duration: 0.2 }, t + 1.1);
+      };
+      // Zooms so that the card spanning top..bottom (in panel view pixels, after scrolling) sits mid-screen.
+      const zoomTo = (top, bottom, t) => {
+        const s = POP.y + (top + bottom) / 2;
+        tl.set("#cam", { transformOrigin: `${ORIGIN_X}px ${(s * ZOOM - 560) / (ZOOM - 1)}px` }, t);
+        tl.to("#cam", { scale: ZOOM, duration: 0.5, ease: IO }, t);
+      };
+      const zoomOut = (t) => tl.to("#cam", { scale: 1, duration: 0.45, ease: IO }, t);
+
+      // Hook: every Pulse icon in the menu bar.
+      const HOOK = { scale: 1.85, transformOrigin: `${(items.left + items.right) / 2}px 0px` };
+      tl.set("#cam", HOOK, 0);
+      tl.set("#p-battery", { opacity: 1 }, 0);
+      cap("#c-hook", 0.3, 3.3);
+      tl.fromTo("#ring", { opacity: 0, scale: 1.04 }, { opacity: 1, scale: 1, duration: 0.35, ease: E }, 1.1);
+      tl.to("#ring", { opacity: 0, duration: 0.3 }, 3.6);
+      tl.to("#cam", { scale: 1, duration: 0.6, ease: IO }, 3.5);
+
+      cap("#c-click", 3.9, 2.0);
+      tl.set("#cursor", { x: 1000, y: 620 }, 3.9);
+      click(BATTERY.x, BATTERY.y, 4.0);
+      tl.set("#itemhl", { opacity: 1 }, 4.75);
+      tl.fromTo("#pop", { opacity: 0, scale: 0.96, y: -8 }, { opacity: 1, scale: 1, y: 0, duration: 0.3, ease: "back.out(1.4)" }, 4.8);
+
+      // Battery: forecasts, then what quitting buys.
+      cap("#c-forecast", 6.0, 3.7);
+      zoomTo(497, 923, 6.6);
+      hl("#h-forecast", 6.8, 2.7);
+      cap("#c-quit", 9.9, 3.65);
+      tl.to("#p-battery", { y: -1748, duration: 0.6, ease: IO }, 10.1);
+      hl("#h-quit", 10.7, 2.7);
+      zoomOut(13.5);
+      tl.to("#p-battery", { y: 0, duration: 0.45, ease: IO }, 13.5);
+
+      // One section per tab: caption, click the tab, zoom on the card, hold.
+      const sections = [
+        { id: "cpu", tab: 241, top: 537, bottom: 751, scroll: 0 },
+        { id: "memory", tab: 378, top: 497, bottom: 659, scroll: 0 },
+        { id: "sensors", tab: 517, top: 245, bottom: 521, scroll: 0 },
+        { id: "network", tab: 656, top: 759, bottom: 1181, scroll: -230 },
+      ];
+      let previous = "battery";
+      sections.forEach((sec, i) => {
+        const t = 14.3 + i * 4.7;
+        cap(`#c-${sec.id}`, t, 3.65);
+        click(POP.x + sec.tab, POP.y + TAB_Y, t + 0.1);
+        tl.set(`#p-${previous}`, { opacity: 0 }, t + 0.85);
+        tl.set(`#p-${sec.id}`, { opacity: 1 }, t + 0.85);
+        if (sec.scroll) tl.to(`#p-${sec.id}`, { y: sec.scroll, duration: 0.5, ease: IO }, t + 0.9);
+        zoomTo(sec.top + sec.scroll, sec.bottom + sec.scroll, t + 0.9);
+        hl(`#h-${sec.id}`, t + 1.3, HOLD);
+        zoomOut(t + 3.95);
+        if (sec.scroll) tl.to(`#p-${sec.id}`, { y: 0, duration: 0.45, ease: IO }, t + 3.95);
+        previous = sec.id;
+      });
+
+      // End card, then reset the scene underneath so the loop starts clean.
+      tl.to("#end", { opacity: 1, duration: 0.5, ease: "power1.inOut" }, 32.5);
+      tl.fromTo(".title", { y: 18 }, { y: 0, duration: 0.7, ease: E }, 32.5);
+      tl.fromTo(".title p", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.4, ease: E }, 32.9);
+      tl.set("#cam", HOOK, 33.2);
+      tl.set(["#pop", "#itemhl", "#p-network"], { opacity: 0 }, 33.2);
+      tl.set("#p-battery", { opacity: 1 }, 33.2);
+      tl.to("#end", { opacity: 0, duration: 0.6, ease: "power1.inOut" }, 35.9);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
